@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+<title>JSF Contacts</title>
+</head>
+<body>
+	<h:panelGroup id="newContact">
+		<h:form>
+			Name: <h:inputText id="name" value="#{contact.personName}" required="true"/>
+			<br/>
+			Email: <h:inputText id="email" value="#{contact.email}"><f:validateRegex pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"/></h:inputText>
+			<br/>
+			Phone Number: <h:inputText id="phone" value="#{contact.phoneNumber}"><f:validateRegex pattern="^[0-9]{10}$"/></h:inputText>
+			<h:commandButton id="submit" value="submit" action="#{contactService.newContact(contact)}" ></h:commandButton>
+			<h:message for="name" /><br/>
+			<h:message for="email" /><br/>
+			<h:message for="phone"/><br/>
+		</h:form>
+	</h:panelGroup>
+	
+	<h:panelGroup id="newContactMessage" rendered="${contactService.getContacts().size() eq 0}">
+		You have no contacts.
+	</h:panelGroup>	
+	
+	<h:panelGroup id="content" rendered="${contactService.getContacts().size() gt 0}">
+		<h:dataTable value="${contactService.getContacts()}" var="dataContact">
+		<h:column><f:facet name="header">Id</f:facet>${dataContact.contactId}</h:column>
+		<h:column><f:facet name="header">Name</f:facet>${dataContact.personName}</h:column>
+		<h:column><f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
+		<h:column><f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
+		<h:column><f:facet name="header"></f:facet><h:form><h:commandLink onclick="confirm('Deleting id: ${dataContact.contactId}')" action="#{contactService.deleteContact(dataContact.contactId)}" value="delete"></h:commandLink></h:form></h:column>
+	</h:dataTable>
+	</h:panelGroup>
+</body>
+</html>
