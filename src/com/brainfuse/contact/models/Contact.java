@@ -1,11 +1,13 @@
 package com.brainfuse.contact.models;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 @ManagedBean
 @RequestScoped
-public class Contact{
+public class Contact implements Serializable{
 
 	private long contactId;
 	private String personName;
