@@ -2,6 +2,7 @@ package com.brainfuse.contact.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -9,6 +10,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.view.facelets.FaceletContext;
+import javax.servlet.jsp.PageContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +27,12 @@ public class ContactService implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
 	
 	private static final long serialVersionUID = -6733222503219403705L;
-	private Contact currentContact;
+	
+	private static final String CURRENT_CONTACT = "currentContact";
 
 	@ManagedProperty(value = "#{baseAccessInMemoryImpl}")
 	private BasicAccess<Contact> dao;
-
+	
 	public BasicAccess<Contact> getDao() {
 		return dao;
 	}
@@ -53,33 +58,35 @@ public class ContactService implements Serializable {
 	}
 
 	public void updateCurrentContact() {
-		logger.debug("updating current contact {}", currentContact);
-		if (currentContact != null) {
-			if (currentContact.getContactId() <= 0) {
+		Contact c = getCurrentContact();
+		logger.debug("updating current contact {}", c);
+		if (c != null) {
+			if (c.getContactId() <= 0) {
 				logger.debug("Contact is a new Contact");
-				newContact(currentContact);
+				newContact(c);
 			} else {
 				logger.debug("Contact is an existing contact");
-				dao.update(currentContact);
+				dao.update(c);
 			}
-			currentContact = null;
+			removeCurrentContact();
 		}
-	}
 	
-	public String setCurrentContact(){
-		logger.debug("Setting new contact to current Contact");
-		currentContact = new Contact();
-		return null;
 	}
 	
 	public void setCurrentContact(Contact c) {
 		logger.debug("Setting Current contact to {}",c);
-		currentContact = c;
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map a = context.getViewRoot().getViewMap();
+		context.getViewRoot().getViewMap().put(CURRENT_CONTACT, c);
 	}
 
 	public Contact getCurrentContact() {
-		logger.debug("get current contact {}",currentContact);
-		return currentContact;
+		Contact c = (Contact) FacesContext.getCurrentInstance().getViewRoot().getViewMap().get(CURRENT_CONTACT);
+		logger.debug("get current contact {}",c);
+		return c;
+	}
+	private void removeCurrentContact(){
+		FacesContext.getCurrentInstance().getViewRoot().getViewMap().remove(CURRENT_CONTACT);
 	}
 
 	public boolean hasContacts() {
@@ -94,13 +101,11 @@ public class ContactService implements Serializable {
 
 	public String newOrEditTitle() {
 		logger.debug("getting new or edit form title");
-		if (currentContact != null) {
-			if (currentContact.getContactId() <= 0)
-				
+		if (getCurrentContact() != null) {
+			if (getCurrentContact().getContactId() <= 0)
 				return "New Contact";
 			else
 				return "Edit Contact";
-
 		} else
 			return "";
 	}
