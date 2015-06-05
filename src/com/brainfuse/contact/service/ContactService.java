@@ -40,15 +40,17 @@ public class ContactService implements Serializable {
 		dao.delete(id);
 	}
 
-	public void updateCurrentContact() {
+	public String updateCurrentContact() {
+		System.out.println("here");
 		if (currentContact != null) {
 			if (currentContact.getContactId() <= 0) {
 				newContact(currentContact);
 			} else {
 				dao.update(currentContact);
 			}
-			this.currentContact = null;
+			currentContact = null;
 		}
+		return null;
 	}
 
 	public void setCurrentContact(Contact c) {
@@ -65,5 +67,16 @@ public class ContactService implements Serializable {
 		}
 		return false;
 
+	}
+
+	public String newOrEditTitle() {
+		if (currentContact != null) {
+			if (currentContact.getContactId() <= 0)
+				return "New Contact";
+			else
+				return "Edit Contact";
+
+		} else
+			return "";
 	}
 }
