@@ -9,72 +9,90 @@
 	<title>JSF Contacts</title>
 </h:head>
 <h:body>
-	<h:panelGroup id="editContact">
-		<h:panelGroup layout="block"
-			rendered="${viewScope.currentContact != null}">
-			<h:form id="editContactForm">
+
+	<h:form id="editContactForm">
+
+		<h:panelGroup id="editContact">
+
+			<h:panelGroup layout="block"
+				rendered="#{not empty contactService.currentContact}">
+
 				<h:outputText value="${contactService.newOrEditTitle()}" />
 				<br />
 				<h:outputLabel for="name" value="Name:" />
 				<h:inputText id="name"
-					value="#{viewScope.currentContact.personName}" />
+					value="#{contactService.currentContact.personName}" />
 				<br />
 				<h:outputLabel for="email" value="Email:" />
 				<h:inputText id="email"
-					value="#{viewScope.currentContact.email}">
+					value="#{contactService.currentContact.email}">
 				</h:inputText>
 				<br />
 				<h:outputLabel for="phone" value="Phone Number:" />
 				<h:inputText id="phone"
-					value="#{viewScope.currentContact.phoneNumber}">
+					value="#{contactService.currentContact.phoneNumber}">
 				</h:inputText>
-				<h:commandButton id="submit" value="submit"
-					action="#{contactService.updateCurrentContact()}">
-					<f:ajax render=":content editErrorMessage" execute="@form"></f:ajax>
-				</h:commandButton>
-				<h:messages globalOnly="true" id="editErrorMessage"></h:messages>
-			</h:form>
-		</h:panelGroup>
-	</h:panelGroup>
 
-	<h:panelGroup id="content">
-		<h:outputText id="newContactMessage" value="You have no contacts."
-			rendered="${not contactService.hasContacts()}" />
-		<h:form id="newContactForm">
-			<h:commandLink value="new contact"
-				action="#{contactService.setCurrentContact(contact)}">
-				<f:ajax render=":editContact" execute="@form"/>
-			</h:commandLink>
-		</h:form>
-		<h:form id="listContactsForm"
-			rendered="${contactService.hasContacts()}">
-			<h:dataTable id="dataTable" value="${contactService.getContacts()}"
-				var="dataContact">
-				<h:column id="id">
-					<f:facet name="header">Id</f:facet>${dataContact.contactId}</h:column>
-				<h:column id="name">
-					<f:facet name="header">Name</f:facet>${dataContact.personName}</h:column>
-				<h:column>
-					<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
-				<h:column>
-					<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
-				<h:column id="actionLinks">
-					<f:facet name="header" id="whatisthis">Actions</f:facet>
-					<h:commandLink id="editLink"
-						action="#{contactService.setCurrentContact(dataContact)}"
-						value="Edit">
-						<f:ajax render="@form :editContact" />
-					</h:commandLink>
-					<h:outputText value=" " />
-					<h:commandLink id="deleteLink"
-						onclick="confirm('Deleting id: ${dataContact.contactId}')"
-						action="#{contactService.deleteContact(dataContact.contactId)}"
-						value="delete">
-						<f:ajax execute="@form" render="@form :editContact" />
-					</h:commandLink>
-				</h:column>
-			</h:dataTable>
-		</h:form>
-	</h:panelGroup>
+				<f:ajax render="editContact content editErrorMessage debugInfo"
+					execute="@form">
+					<h:commandButton id="submit"
+						value="${contactService.newOrEditLabel()}"
+						action="#{contactService.updateCurrentContact}" />
+
+					<h:commandButton id="cancel" value="cancel"
+						action="#{contactService.cancel}" />
+
+				</f:ajax>
+
+
+				<h:messages globalOnly="true" id="editErrorMessage"></h:messages>
+
+			</h:panelGroup>
+
+		</h:panelGroup>
+
+		<h:panelGroup id="content">
+
+			<h:panelGroup layout="block"
+				rendered="${empty contactService.currentContact}">
+
+				<h:outputText id="newContactMessage" value="You have no contacts."
+					rendered="${not contactService.hasContacts()}" />
+				<h:commandLink value="new contact" id="newContactButton"
+					action="#{contactService.newContact}">
+					<f:ajax render="@all" execute="@form" />
+				</h:commandLink>
+				<h:panelGroup id="listContacts"
+					rendered="${contactService.hasContacts()}">
+					<h:dataTable id="dataTable" value="${contactService.getContacts()}"
+						var="dataContact">
+						<h:column id="id">
+							<f:facet name="header">Id</f:facet>${dataContact.contactId}</h:column>
+						<h:column id="name">
+							<f:facet name="header">Name</f:facet>${dataContact.personName}</h:column>
+						<h:column>
+							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
+						<h:column>
+							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
+						<h:column id="actionLinks">
+							<f:facet name="header" id="whatisthis">Actions</f:facet>
+							<h:commandLink id="editLink"
+								action="#{contactService.setCurrentContact(dataContact)}"
+								value="Edit">
+								<f:ajax render="@form :editContact :debugInfo" execute="@form" />
+							</h:commandLink>
+							<h:outputText value=" " />
+							<h:commandLink id="deleteLink"
+								onclick="confirm('Deleting id: ${dataContact.contactId}')"
+								action="#{contactService.deleteContact(dataContact.contactId)}"
+								value="delete">
+								<f:ajax execute="@form" render="@form :editContact" />
+							</h:commandLink>
+						</h:column>
+					</h:dataTable>
+				</h:panelGroup>
+			</h:panelGroup>
+		</h:panelGroup>
+	</h:form>
 </h:body>
 </html>

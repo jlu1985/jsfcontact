@@ -8,11 +8,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.facelets.FaceletContext;
-import javax.servlet.jsp.PageContext;
+import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +21,23 @@ import com.brainfuse.contact.models.Contact;
 @ManagedBean(name = "contactService", eager = true)
 @ViewScoped
 public class ContactService implements Serializable {
-	
-	private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
-	
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ContactService.class);
+
 	private static final long serialVersionUID = -6733222503219403705L;
-	
-	private static final String CURRENT_CONTACT = "currentContact";
+
+	// private static final String CURRENT_CONTACT = "currentContact";
 
 	@ManagedProperty(value = "#{baseAccessInMemoryImpl}")
 	private BasicAccess<Contact> dao;
-	
+
+	private Contact currentContact;
+
 	public BasicAccess<Contact> getDao() {
 		return dao;
 	}
-	
-	
+
 	public void setDao(BasicAccess<Contact> dao) {
 		this.dao = dao;
 	}
@@ -47,13 +47,13 @@ public class ContactService implements Serializable {
 		return dao.find();
 	}
 
-	public boolean newContact(Contact c) {
+	public void createNewContact(Contact c) {
 		logger.debug("add contact using dao");
-		return dao.create(c);
+		dao.create(c);
 	}
 
 	public void deleteContact(long id) {
-		logger.debug("deleting contact id {}",id);
+		logger.debug("deleting contact id {}", id);
 		dao.delete(id);
 	}
 
@@ -63,32 +63,34 @@ public class ContactService implements Serializable {
 		if (c != null) {
 			if (c.getContactId() <= 0) {
 				logger.debug("Contact is a new Contact");
-				newContact(c);
+				createNewContact(c);
 			} else {
 				logger.debug("Contact is an existing contact");
 				dao.update(c);
 			}
 			removeCurrentContact();
 		}
-	
+
 	}
-	
-	public void setCurrentContact(Contact c) {
-		logger.debug("Setting Current contact to {}",c);
-		FacesContext context = FacesContext.getCurrentInstance();
-		Map a = context.getViewRoot().getViewMap();
-		context.getViewRoot().getViewMap().put(CURRENT_CONTACT, c);
+
+	public String setCurrentContact(Contact c) {
+		logger.debug("Setting Current contact to {}", c);
+		this.currentContact = c;
+		return null;
 	}
 
 	public Contact getCurrentContact() {
-		Contact c = (Contact) FacesContext.getCurrentInstance().getViewRoot().getViewMap().get(CURRENT_CONTACT);
-		logger.debug("get current contact {}",c);
-		return c;
-	}
-	private void removeCurrentContact(){
-		FacesContext.getCurrentInstance().getViewRoot().getViewMap().remove(CURRENT_CONTACT);
+		return this.currentContact;
 	}
 
+	private void removeCurrentContact() {
+		this.currentContact = null;
+	}
+	
+	public String cancel(){
+		removeCurrentContact();
+		return null;
+	}
 	public boolean hasContacts() {
 		if (dao.find().size() > 0) {
 			logger.debug("has contacts");
@@ -101,23 +103,37 @@ public class ContactService implements Serializable {
 
 	public String newOrEditTitle() {
 		logger.debug("getting new or edit form title");
-		if (getCurrentContact() != null) {
-			if (getCurrentContact().getContactId() <= 0)
-				return "New Contact";
-			else
-				return "Edit Contact";
-		} else
+		try {
+			return (getCurrentContact().isNewContact()) ? "New Contact" : "Edit Contact";
+		} catch (NullPointerException e) {
 			return "";
+		}
 	}
-	
+
+	public String newOrEditLabel() {
+		try {
+			return (getCurrentContact().isNewContact()) ? "New" : "Edit";
+		} catch (NullPointerException e) {
+			return "";
+		}
+	}
+
+
+
 	@PostConstruct
-	public void init(){
-		logger.debug("{} is created by container",this);
+	public void init() {
+		logger.debug("{} is created by container", this);
 		logger.debug("Dao object: {}", dao);
-		
+
 	}
+
 	@PreDestroy
-	public void preDestroy(){
+	public void preDestroy() {
 		logger.debug("{} is in pre destroy", this);
 	}
+
+	public void newContact() {
+		this.currentContact = new Contact();
+	}
+
 }

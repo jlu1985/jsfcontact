@@ -2,14 +2,18 @@ package com.brainfuse.contact.models;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
-@ManagedBean
-@SessionScoped
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class Contact implements Serializable{
-
+	private static final Logger logger = LoggerFactory.getLogger(Contact.class);
 	private long contactId;
 	private String personName;
 	private String email;
@@ -52,6 +56,18 @@ public class Contact implements Serializable{
 		return String
 				.format("Contact [contactId=%s, personName=%s, email=%s, phoneNumber=%s]",
 						contactId, personName, email, phoneNumber);
+	}
+	
+	@PostConstruct
+	public void init(){
+		logger.debug("{} is created by the container",this);
+	}
+	
+	public boolean isNewContact(){
+			if (getContactId() <= 0)
+				return true;
+			else
+				return false;
 	}
 }
 
