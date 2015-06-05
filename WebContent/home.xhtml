@@ -10,34 +10,42 @@
 </h:head>
 <h:body>
 	<h:panelGroup id="editContact">
-		<h:panelGroup layout="block" rendered="#{contactService.currentContact != null}">
-		<h:form id="editContactForm">
-		<h:outputText value="${contactService.newOrEditTitle()}"/>
-			<br />
-			Name: <h:inputText id="name"
+		<h:panelGroup layout="block"
+			rendered="#{contactService.currentContact != null}">
+			<h:form id="editContactForm">
+				<h:outputText value="${contactService.newOrEditTitle()}" />
+				<br />
+				<h:outputLabel for="name" value="Name:" />
+				<h:inputText id="name"
 					value="#{contactService.currentContact.personName}" />
 				<br />
-			Email: <h:inputText id="email"
+				<h:outputLabel for="email" value="Email:" />
+				<h:inputText id="email"
 					value="#{contactService.currentContact.email}">
 				</h:inputText>
 				<br />
-			Phone Number: <h:inputText id="phone"
+				<h:outputLabel for="phone" value="Phone Number:" />
+				<h:inputText id="phone"
 					value="#{contactService.currentContact.phoneNumber}">
 				</h:inputText>
-				<h:commandButton id="submit" value="submit" action="#{contactService.updateCurrentContact}">
-					<f:ajax render=":content" execute="@form"/>
+				<h:commandButton id="submit" value="submit"
+					action="#{contactService.updateCurrentContact}">
+					<f:ajax render=":content editErrorMessage :editContact" execute="@form"></f:ajax>
 				</h:commandButton>
+				<h:messages globalOnly="true" id="editErrorMessage"></h:messages>
 			</h:form>
 		</h:panelGroup>
 	</h:panelGroup>
 
 	<h:panelGroup id="content">
-		<h:outputText id="newContactMessage" value="You have no contacts." rendered="${not contactService.hasContacts()}"/>
+		<h:outputText id="newContactMessage" value="You have no contacts."
+			rendered="${not contactService.hasContacts()}" />
 		<h:form id="newContactForm">
-			<h:commandLink value="new contact" action="#{contactService.setCurrentContact(contact)}">
-			<f:ajax render=":editContact"/>
+			<h:commandLink value="new contact"
+				action="#{contactService.setCurrentContact}">
+				<f:ajax render=":editContact" execute="@form"/>
 			</h:commandLink>
-		</h:form>		
+		</h:form>
 		<h:form id="listContactsForm"
 			rendered="${contactService.hasContacts()}">
 			<h:dataTable id="dataTable" value="${contactService.getContacts()}"
@@ -55,7 +63,7 @@
 					<h:commandLink id="editLink"
 						action="#{contactService.setCurrentContact(dataContact)}"
 						value="Edit">
-						<f:ajax render="@form :editContact"></f:ajax>
+						<f:ajax render="@form :editContact" />
 					</h:commandLink>
 					<h:outputText value=" " />
 					<h:commandLink id="deleteLink"

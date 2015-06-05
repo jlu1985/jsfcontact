@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.brainfuse.contact.dataaccess.BasicAccess;
 import com.brainfuse.contact.models.Contact;
@@ -20,6 +24,7 @@ public class BaseAccessInMemoryImpl implements
 	 * 
 	 */
 	private static final long serialVersionUID = 6549720693403630961L;
+	private static final Logger logger = LoggerFactory.getLogger(BaseAccessInMemoryImpl.class);
 	private Map<Long, Contact> contacts;
 	private long id;
 	
@@ -29,6 +34,7 @@ public class BaseAccessInMemoryImpl implements
 
 	@Override
 	public boolean create(Contact t) {
+		logger.debug("dao calls: create");
 		t.setContactId(++id);
 		contacts.put(t.getContactId(), t);
 		return true;
@@ -36,16 +42,19 @@ public class BaseAccessInMemoryImpl implements
 
 	@Override
 	public int update(Contact t) {
+		logger.debug("dao calls: update");
 		return 0;
 	}
 
 	@Override
 	public List<Contact> find() {
+		logger.debug("dao calls: find all");
 		return new ArrayList<Contact>(contacts.values());
 	}
 
 	@Override
 	public int delete(long id) {
+		logger.debug("dao calls: delete {}",id);
 		if (contacts.remove(id) != null) {
 			return 1;
 		} else {
@@ -55,9 +64,15 @@ public class BaseAccessInMemoryImpl implements
 
 	@Override
 	public int delete(long... ids) {
+		logger.debug("dao calls: delete all {}",ids);
 		int beforeSize = contacts.size();
 		Arrays.stream(ids).forEach(id -> contacts.remove(id));
 		int afterSize = contacts.size();
 		return beforeSize-afterSize;
+	}
+	
+	@PostConstruct
+	public void init(){
+		logger.debug("{} is created by container",this);
 	}
 }
