@@ -87,10 +87,10 @@ public class ContactService implements Serializable {
 		this.currentContact = null;
 	}
 	
-	public String cancel(){
+	public void cancel(){
 		removeCurrentContact();
-		return null;
 	}
+	
 	public boolean hasContacts() {
 		if (dao.find().size() > 0) {
 			logger.debug("has contacts");
@@ -98,27 +98,7 @@ public class ContactService implements Serializable {
 		}
 		logger.debug("has no contacts");
 		return false;
-
 	}
-
-	public String newOrEditTitle() {
-		logger.debug("getting new or edit form title");
-		try {
-			return (getCurrentContact().isNewContact()) ? "New Contact" : "Edit Contact";
-		} catch (NullPointerException e) {
-			return "";
-		}
-	}
-
-	public String newOrEditLabel() {
-		try {
-			return (getCurrentContact().isNewContact()) ? "New" : "Edit";
-		} catch (NullPointerException e) {
-			return "";
-		}
-	}
-
-
 
 	@PostConstruct
 	public void init() {

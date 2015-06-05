@@ -13,11 +13,11 @@
 	<h:form id="editContactForm">
 
 		<h:panelGroup id="editContact">
-
 			<h:panelGroup layout="block"
 				rendered="#{not empty contactService.currentContact}">
 
-				<h:outputText value="${contactService.newOrEditTitle()}" />
+				<h:outputText
+					value="${contactService.currentContact.isNewContact()?'New Contact':'Edit Contact'}" />
 				<br />
 				<h:outputLabel for="name" value="Name:" />
 				<h:inputText id="name"
@@ -36,23 +36,18 @@
 				<f:ajax render="editContact content editErrorMessage debugInfo"
 					execute="@form">
 					<h:commandButton id="submit"
-						value="${contactService.newOrEditLabel()}"
+						value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
 						action="#{contactService.updateCurrentContact}" />
 
 					<h:commandButton id="cancel" value="cancel"
 						action="#{contactService.cancel}" />
-
 				</f:ajax>
-
-
 				<h:messages globalOnly="true" id="editErrorMessage"></h:messages>
-
 			</h:panelGroup>
 
 		</h:panelGroup>
 
 		<h:panelGroup id="content">
-
 			<h:panelGroup layout="block"
 				rendered="${empty contactService.currentContact}">
 
@@ -62,6 +57,8 @@
 					action="#{contactService.newContact}">
 					<f:ajax render="@all" execute="@form" />
 				</h:commandLink>
+				
+				
 				<h:panelGroup id="listContacts"
 					rendered="${contactService.hasContacts()}">
 					<h:dataTable id="dataTable" value="${contactService.getContacts()}"
