@@ -1,6 +1,8 @@
 package com.brainfuse.contact.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -11,6 +13,8 @@ import javax.faces.bean.ViewScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.brainfuse.contact.models.locations.Address;
+
 
 public class Contact implements Serializable{
 	private static final Logger logger = LoggerFactory.getLogger(Contact.class);
@@ -18,7 +22,37 @@ public class Contact implements Serializable{
 	private String personName;
 	private String email;
 	private String phoneNumber;
+	
+	public Contact() {
+		addresses = new ArrayList<Address>();
+	}
+	public List<Address> getAddresses() {
+		return addresses;
+	}
 
+	
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
+	}
+	
+	public void addAddress(Address addr){
+		addresses.add(addr);
+	}
+	
+	
+	public Address getDefaultAddress() {
+		return defaultAddress;
+	}
+
+	public void setDefaultAddress(Address defaultAddress) {
+		this.defaultAddress = defaultAddress;
+	}
+
+	private List<Address> addresses;
+	private Address defaultAddress;
+	
+	
+	
 	public long getContactId() {
 		return contactId;
 	}
@@ -50,14 +84,14 @@ public class Contact implements Serializable{
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
+	
 	@Override
 	public String toString() {
 		return String
-				.format("Contact [contactId=%s, personName=%s, email=%s, phoneNumber=%s]",
-						contactId, personName, email, phoneNumber);
+				.format("Contact [contactId=%s, personName=%s, email=%s, phoneNumber=%s, addresses=%s, defaultAddress=%s]",
+						contactId, personName, email, phoneNumber, addresses,
+						defaultAddress);
 	}
-	
 	@PostConstruct
 	public void init(){
 		logger.debug("{} is created by the container",this);

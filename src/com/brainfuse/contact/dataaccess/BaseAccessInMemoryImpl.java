@@ -1,4 +1,4 @@
-package com.brainfuse.contact.service;
+package com.brainfuse.contact.dataaccess;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import javax.faces.bean.ManagedBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.brainfuse.contact.dataaccess.BasicAccess;
 import com.brainfuse.contact.models.Contact;
 @ManagedBean(eager=true)
 @ApplicationScoped
