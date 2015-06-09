@@ -3,6 +3,7 @@ package com.brainfuse.contact.service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import com.brainfuse.contact.dataaccess.BasicAccess;
 import com.brainfuse.contact.models.Contact;
+import com.brainfuse.contact.models.Relationship;
+import com.brainfuse.contact.models.locations.Address;
 
 @ManagedBean(name = "contactService", eager = true)
 @ViewScoped
@@ -43,6 +46,29 @@ public class ContactService implements Serializable {
 	public List<Contact> getContacts() {
 		logger.debug("get all contacts from dao");
 		return dao.find();
+	}
+	
+	public List<Contact> getAvailableContacts() {
+		List<Relationship> relationships = getCurrentContact().getRelationships();
+		logger.debug("filtering all contacts from {}", relationships);
+		List<Contact> allContacts = getContacts();
+
+		List<Long> relatedIds = relationships.stream().map(rel->rel.getToContactId()).collect(Collectors.toList());
+
+		if (relationships != null && relationships.size() > 0) {
+			List<Contact> contacts = allContacts
+					.stream()
+					.filter(contact -> !relatedIds.contains(contact
+							.getContactId())
+							&& contact.getContactId() != getCurrentContact()
+									.getContactId())
+					.collect(Collectors.toList());
+			return contacts;
+		}
+
+		else
+			return allContacts;
+
 	}
 
 	public void createNewContact(Contact c) {
@@ -84,11 +110,11 @@ public class ContactService implements Serializable {
 	private void removeCurrentContact() {
 		this.currentContact = null;
 	}
-	
-	public void cancel(){
+
+	public void cancel() {
 		removeCurrentContact();
 	}
-	
+
 	public boolean hasContacts() {
 		if (dao.find().size() > 0) {
 			logger.debug("has contacts");
@@ -114,4 +140,12 @@ public class ContactService implements Serializable {
 		this.currentContact = new Contact();
 	}
 
-}
+	public void addAddress(Contact c) {
+		c.addAddress(new Address());
+	}
+
+	public void removeLastAddress(Contact c) {
+		c.removeLastAddress();
+	}
+	
+	}

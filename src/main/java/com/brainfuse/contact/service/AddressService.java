@@ -37,14 +37,6 @@ public class AddressService {
 	public void setStates(List<State> states) {
 		this.states = states;
 	}
-
-	public void addAddress(Contact c){
-			c.addAddress(new Address());
-	}
-	
-	public void removeLastAddress(Contact c){
-		c.getAddresses().remove(c.getAddresses().size()-1);
-	}
 	
 	
 	@PostConstruct

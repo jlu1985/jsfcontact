@@ -58,24 +58,26 @@
 							<h:outputLabel for="line2" value="Address Line2: " />
 							<h:inputText id="line2" value="#{addr.addressList2}"></h:inputText>
 							<h:outputLabel for="state" value="State" />
-							<h:selectOneMenu id="state" value="#{addr.state}" converter="#{stateConverter}">
-							<f:selectItem itemValue="#{null}" itemLabel="--select--" noSelectionOption="true" />
+							<h:selectOneMenu id="state" value="#{addr.state}"
+								converter="#{stateConverter}">
+								<f:selectItem itemValue="#{null}" itemLabel="--select--"
+									noSelectionOption="true" />
 								<f:selectItems value="${addressService.states}" var="states"
 									itemLabel="#{states.name}" itemValue="#{states}"></f:selectItems>
-									<f:ajax event="valueChange" render="city"></f:ajax>
+								<f:ajax event="valueChange" render="city"></f:ajax>
 							</h:selectOneMenu>
-							<h:outputLabel for="city" value="City"/>
-							<h:selectOneMenu id="city" value="#{addr.city}" converter="#{cityConverter}">
-							<f:selectItem itemValue="#{null}" itemLabel="--select--" noSelectionOption="true" />
-								<f:selectItems value="${addr.state.cities}" var="cities" itemLabel="#{cities.name}" itemValue="#{cities}"></f:selectItems>
+							<h:outputLabel for="city" value="City" />
+							<h:selectOneMenu id="city" value="#{addr.city}"
+								converter="#{cityConverter}">
+								<f:selectItem itemValue="#{null}" itemLabel="--select--"
+									noSelectionOption="true" />
+								<f:selectItems value="${addr.state.cities}" var="cities"
+									itemLabel="#{cities.name}" itemValue="#{cities}"></f:selectItems>
 								<f:attribute name="state" value="${addr.state}"></f:attribute>
 							</h:selectOneMenu>
-							<h:outputLabel for="postcode" value="Postal Code"/>
-							<h:inputText id="postcode" value="#{addr.postcode}"/>
-							
-							
-							
-							<h:message for="state" showDetail="true"></h:message>
+							<h:outputLabel for="postcode" value="Postal Code" />
+							<h:inputText id="postcode" value="#{addr.postcode}" />
+
 						</h:panelGrid>
 					</ui:repeat>
 
@@ -84,17 +86,55 @@
 				<f:ajax execute="@form" render="@form">
 					<h:panelGrid columns="2" id="addressControls">
 						<h:commandLink id="addNewAddressLink"
-							value="${(contactService.currentContact.addresses.size() >0)?'More Address':'Add Address'}"
-							action="#{addressService.addAddress(contactService.currentContact)}" />
+							value="${(contactService.currentContact.addresses.size() >0)?'Add more addresses':'Add an address'}"
+							action="#{contactService.addAddress(contactService.currentContact)}" />
 						<h:commandLink id="removeLastAddressLink"
-							action="#{addressService.removeLastAddress(contactService.currentContact)}"
+							action="#{contactService.removeLastAddress(contactService.currentContact)}"
 							value="Remove"
 							rendered="${contactService.currentContact.addresses.size() >0}" />
 					</h:panelGrid>
 				</f:ajax>
 
 
+				<!-- Add Relationship -->
+				<h:panelGroup id="relationshipPanel">
+					<ui:repeat id="relationships" var="rel"
+						value="${contactService.currentContact.relationships}"
+						varStatus="loop">
 
+						<h:panelGroup id="newRelationshipBlock"
+							styleClass="newRelationshipBlock">
+							<f:facet name="header">
+								<h:outputText value="Relationship ${loop.index +1}"></h:outputText>
+							</f:facet>
+							<h:outputLabel for="relationshipType" value="Relationship Type"/>
+							<h:inputText id="relationshipType" value="#{rel.type}"/>
+							<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
+								<f:selectItems value="${contactService.availableContacts}" 
+								var="dataContacts" 
+								itemValue="${dataContacts.contactId}" itemLabel="${dataContacts.personName}"></f:selectItems>							
+							</h:selectOneMenu>
+								
+
+							<h:commandLink id="removeRelationshipLink" value="Remove"
+							action="#{contactService.currentContact.removeRelationship(rel)}"
+							><f:ajax execute="@form" render="@form"/></h:commandLink>
+							
+						</h:panelGroup>
+						<br/>				
+					</ui:repeat>
+
+				</h:panelGroup>
+
+				<f:ajax execute="@form" render="@form">
+					<h:panelGrid columns="2" id="relationshipControls">
+						<h:commandLink id="addNewRelationshipLink"
+							value="${(contactService.currentContact.relationships.size()>0)?'Add more relationships':'Add a relationship'}"
+							action="#{contactService.currentContact.addRelationship}" />
+						
+					</h:panelGrid>
+
+				</f:ajax>
 
 
 				<!-- form submit -->
@@ -142,12 +182,22 @@
 							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
 						<h:column>
 							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
+							<h:column>
+								<f:facet name="header">Related Contacts</f:facet>
+								<ul>
+									<ui:repeat value="${dataContact.relationships}" var="dataRel">
+										<li><h:outputText value="${dataRel}"/></li>
+									</ui:repeat>
+								
+								</ul>
+							</h:column>
 						<h:column>
-						<ul>
-							<ui:repeat value="${dataContact.addresses}" var="dataAddr">
-							<li><h:outputText value="${dataAddr.getDefaultFormat()}"/></li>	
-							</ui:repeat>
-						</ul>
+						<f:facet name="header">Addresses</f:facet>
+							<ul>
+								<ui:repeat value="${dataContact.addresses}" var="dataAddr">
+									<li><h:outputText value="${dataAddr.getDefaultFormat()}" /></li>
+								</ui:repeat>
+							</ul>
 						</h:column>
 						<h:column id="actionLinks">
 							<f:facet name="header" id="whatisthis">Actions</f:facet>
