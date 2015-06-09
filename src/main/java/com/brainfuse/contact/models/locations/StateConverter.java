@@ -37,11 +37,11 @@ public class StateConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent ui, String value) {
 		logger.debug("Converting {} to object",value);
-		long id = Long.valueOf(value);
+		if (value == null){ return null;}
 		for (State state : addressService.getStates()) {
 
-			if (state.getStateId() == id) {
-				logger.debug("Found object {} that matches {}",state,id);
+			if (state.toString().equals(value)) {
+				logger.debug("Found object {} that matches {}",state,value);
 				logger.debug("Returning {}",state);
 				return state;
 			}
@@ -52,7 +52,8 @@ public class StateConverter implements Converter {
 
 	@Override
 	public String getAsString(FacesContext context, UIComponent ui, Object obj) {
-		logger.debug("Conver {} to String",obj);
+		logger.debug("Converting {} to String",obj);
+		if (obj==null) return null;
 		return obj.toString();
 	}
 	

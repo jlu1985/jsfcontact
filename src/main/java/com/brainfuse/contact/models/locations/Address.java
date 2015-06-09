@@ -45,6 +45,11 @@ public class Address {
 	public void setPostcode(int postcode) {
 		this.postcode = postcode;
 	}
+	
+	public String getDefaultFormat(){
+		return String.format("%s %s,%s, %s %d",addressLine1, addressList2,city.getName(),state.getShortName(),postcode);
+	}
+	
 	@Override
 	public String toString() {
 		return String

@@ -72,6 +72,11 @@ public class InMemoryState implements BasicAccess<State> {
 	public void init(){
 		logger.debug("{} created by container",this);
 	}
+
+	@Override
+	public State findById(long id) {
+		return states.get(id);
+	}
 	
 
 }

@@ -74,4 +74,12 @@ public class BaseAccessInMemoryImpl implements
 	public void init(){
 		logger.debug("{} is created by container",this);
 	}
+
+	@Override
+	public Contact findById(long id) {
+		logger.debug("Finding contact id {}",id);
+		Contact c = contacts.get(id);
+		logger.debug("Returning {}",c);
+		return c;
+	}
 }

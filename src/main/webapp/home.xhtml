@@ -58,10 +58,21 @@
 							<h:outputLabel for="line2" value="Address Line2: " />
 							<h:inputText id="line2" value="#{addr.addressList2}"></h:inputText>
 							<h:outputLabel for="state" value="State" />
-							<h:selectOneMenu id="state" value="#{addr.state}" converter="#{stateConverter}" validator="stateValidator">
+							<h:selectOneMenu id="state" value="#{addr.state}" converter="#{stateConverter}">
+							<f:selectItem itemValue="#{null}" itemLabel="--select--" noSelectionOption="true" />
 								<f:selectItems value="${addressService.states}" var="states"
-									itemLabel="#{states.name}" itemValue="#{states.stateId}"></f:selectItems>
+									itemLabel="#{states.name}" itemValue="#{states}"></f:selectItems>
+									<f:ajax event="valueChange" render="city"></f:ajax>
 							</h:selectOneMenu>
+							<h:outputLabel for="city" value="City"/>
+							<h:selectOneMenu id="city" value="#{addr.city}" converter="#{cityConverter}">
+							<f:selectItem itemValue="#{null}" itemLabel="--select--" noSelectionOption="true" />
+								<f:selectItems value="${addr.state.cities}" var="cities" itemLabel="#{cities.name}" itemValue="#{cities}"></f:selectItems>
+								<f:attribute name="state" value="${addr.state}"></f:attribute>
+							</h:selectOneMenu>
+							<h:outputLabel for="postcode" value="Postal Code"/>
+							<h:inputText id="postcode" value="#{addr.postcode}"/>
+							
 							
 							
 							<h:message for="state" showDetail="true"></h:message>
@@ -131,7 +142,13 @@
 							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
 						<h:column>
 							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
-
+						<h:column>
+						<ul>
+							<ui:repeat value="${dataContact.addresses}" var="dataAddr">
+							<li><h:outputText value="${dataAddr.getDefaultFormat()}"/></li>	
+							</ui:repeat>
+						</ul>
+						</h:column>
 						<h:column id="actionLinks">
 							<f:facet name="header" id="whatisthis">Actions</f:facet>
 							<h:commandLink id="editLink"
