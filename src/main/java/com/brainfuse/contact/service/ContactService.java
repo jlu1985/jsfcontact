@@ -34,6 +34,7 @@ public class ContactService implements Serializable {
 	private BasicAccess<Contact> dao;
 
 	private Contact currentContact;
+	private Relationship currentRelationship;
 
 	public BasicAccess<Contact> getDao() {
 		return dao;
@@ -147,5 +148,16 @@ public class ContactService implements Serializable {
 	public void removeLastAddress(Contact c) {
 		c.removeLastAddress();
 	}
+
+	public Relationship getCurrentRelationship() {
+		return currentRelationship;
+	}
+
+	public void setCurrentRelationship(Relationship currentRelationship) {
+		logger.debug("Setting currentRelationship to object {}",currentRelationship);
+		this.currentRelationship = currentRelationship;
+	}
+	
+	
 	
 	}

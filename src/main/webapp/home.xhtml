@@ -4,7 +4,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:ace="http://www.icefaces.org/icefaces/components"
+	xmlns:icecore="http://www.icefaces.org/icefaces/core">
 <h:head>
 	<title>JSF Contacts</title>
 	<style>
@@ -16,7 +18,6 @@
 <h:body>
 	<ui:debug />
 	<h:form id="editContactForm">
-
 		<h:messages />
 		<h:panelGroup id="editContact">
 			<h:panelGroup layout="block"
@@ -99,26 +100,28 @@
 				<!-- Add Relationship -->
 				<h:panelGroup id="relationshipPanel">
 					<ui:repeat id="relationships" var="rel"
-						value="${contactService.currentContact.relationships}"
+						value="${contactService.currentContact.relationships}" 
 						varStatus="loop">
-
+	
 						<h:panelGroup id="newRelationshipBlock"
 							styleClass="newRelationshipBlock">
-							<f:facet name="header">
-								<h:outputText value="Relationship ${loop.index +1}"></h:outputText>
-							</f:facet>
 							<h:outputLabel for="relationshipType" value="Relationship Type"/>
 							<h:inputText id="relationshipType" value="#{rel.type}"/>
 							<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
 								<f:selectItems value="${contactService.availableContacts}" 
 								var="dataContacts" 
-								itemValue="${dataContacts.contactId}" itemLabel="${dataContacts.personName}"></f:selectItems>							
+								itemValue="${dataContacts.contactId}" itemLabel="${dataContacts.personName}">
+								</f:selectItems>
 							</h:selectOneMenu>
 								
 
+	<f:ajax execute="@form" render="@form">
+							<h:commandLink id="editRelationshipLink" value="Edit" action="#{contactService.setCurrentRelationship(rel)}"/>
+							<h:outputText value=" "/>
 							<h:commandLink id="removeRelationshipLink" value="Remove"
-							action="#{contactService.currentContact.removeRelationship(rel)}"
-							><f:ajax execute="@form" render="@form"/></h:commandLink>
+							action="#{contactService.currentContact.removeRelationship(rel)}"/>
+							
+							</f:ajax>
 							
 						</h:panelGroup>
 						<br/>				
