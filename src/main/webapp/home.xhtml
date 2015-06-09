@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>JSF Contacts</title>
+	<style>
+.newAddressBlock {
+	display: block;
+}
+</style>
+</h:head>
+<h:body>
+	<ui:debug />
+	<h:form id="editContactForm">
+
+		<h:messages />
+		<h:panelGroup id="editContact">
+			<h:panelGroup layout="block"
+				rendered="#{not empty contactService.currentContact}">
+
+				<!-- Contact details -->
+				<h:outputText
+					value="${contactService.currentContact.isNewContact()?'New Contact':'Edit Contact'}" />
+				<br />
+				<h:outputLabel for="name" value="Name:" />
+				<h:inputText id="name"
+					value="#{contactService.currentContact.personName}" />
+				<br />
+				<h:outputLabel for="email" value="Email:" />
+				<h:inputText id="email"
+					value="#{contactService.currentContact.email}">
+				</h:inputText>
+				<br />
+				<h:outputLabel for="phone" value="Phone Number:" />
+				<h:inputText id="phone"
+					value="#{contactService.currentContact.phoneNumber}">
+				</h:inputText>
+
+				<!-- Address Panel-->
+				<br />
+
+
+				<h:panelGroup id="addressPanel">
+					<ui:repeat id="addresses" var="addr"
+						value="#{contactService.currentContact.addresses}"
+						varStatus="loop">
+						<h:panelGrid columns="2" id="newAddressBlock"
+							styleClass="newAddressBlock">
+							<f:facet name="header">
+								<h:outputText value="Address ${loop.index}" />
+							</f:facet>
+							<h:outputLabel for="line1" value="Address Line1: " />
+							<h:inputText id="line1" value="#{addr.addressLine1}"></h:inputText>
+							<h:outputLabel for="line2" value="Address Line2: " />
+							<h:inputText id="line2" value="#{addr.addressList2}"></h:inputText>
+							<h:outputLabel for="state" value="State" />
+							<h:selectOneMenu id="state" value="#{addr.state}" converter="#{stateConverter}" validator="stateValidator">
+								<f:selectItems value="${addressService.states}" var="states"
+									itemLabel="#{states.name}" itemValue="#{states.stateId}"></f:selectItems>
+							</h:selectOneMenu>
+							
+							
+							<h:message for="state" showDetail="true"></h:message>
+						</h:panelGrid>
+					</ui:repeat>
+
+				</h:panelGroup>
+
+				<f:ajax execute="@form" render="@form">
+					<h:panelGrid columns="2" id="addressControls">
+						<h:commandLink id="addNewAddressLink"
+							value="${(contactService.currentContact.addresses.size() >0)?'More Address':'Add Address'}"
+							action="#{addressService.addAddress(contactService.currentContact)}" />
+						<h:commandLink id="removeLastAddressLink"
+							action="#{addressService.removeLastAddress(contactService.currentContact)}"
+							value="Remove"
+							rendered="${contactService.currentContact.addresses.size() >0}" />
+					</h:panelGrid>
+				</f:ajax>
+
+
+
+
+
+				<!-- form submit -->
+				<f:ajax render="editContact content editErrorMessage debugInfo"
+					execute="@form">
+					<h:commandButton id="submit"
+						value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
+						action="#{contactService.updateCurrentContact}" />
+
+					<h:commandButton id="cancel" value="cancel"
+						action="#{contactService.cancel}" />
+				</f:ajax>
+				<h:messages globalOnly="true" id="editErrorMessage"></h:messages>
+			</h:panelGroup>
+
+
+
+
+		</h:panelGroup>
+
+
+
+		<!-- Content -->
+		<h:panelGroup id="content">
+			<h:panelGroup layout="block"
+				rendered="${empty contactService.currentContact}">
+
+				<h:outputText id="newContactMessage" value="You have no contacts."
+					rendered="${not contactService.hasContacts()}" />
+				<h:commandLink value="new contact" id="newContactButton"
+					action="#{contactService.newContact}">
+					<f:ajax render="@all" execute="@form" />
+				</h:commandLink>
+
+
+				<h:panelGroup id="listContacts"
+					rendered="${contactService.hasContacts()}">
+					<h:dataTable id="dataTable" value="${contactService.getContacts()}"
+						var="dataContact">
+						<h:column id="id">
+							<f:facet name="header">Id</f:facet>${dataContact.contactId}</h:column>
+						<h:column id="name">
+							<f:facet name="header">Name</f:facet>${dataContact.personName}</h:column>
+						<h:column>
+							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
+						<h:column>
+							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
+
+						<h:column id="actionLinks">
+							<f:facet name="header" id="whatisthis">Actions</f:facet>
+							<h:commandLink id="editLink"
+								action="#{contactService.setCurrentContact(dataContact)}"
+								value="Edit">
+								<f:ajax render="@form :editContact :debugInfo" execute="@form" />
+							</h:commandLink>
+							<h:outputText value=" " />
+							<h:commandLink id="deleteLink"
+								onclick="confirm('Deleting id: ${dataContact.contactId}')"
+								action="#{contactService.deleteContact(dataContact.contactId)}"
+								value="delete">
+								<f:ajax execute="@form" render="@form :editContact" />
+							</h:commandLink>
+						</h:column>
+					</h:dataTable>
+				</h:panelGroup>
+			</h:panelGroup>
+		</h:panelGroup>
+	</h:form>
+</h:body>
+</html>
