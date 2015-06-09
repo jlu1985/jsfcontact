@@ -30,7 +30,7 @@ public class InMemoryRelationship implements BasicAccess<Relationship> {
 	@Override
 	public boolean create(Relationship t) {
 		try {
-			relationships.put(t.getContactId(), t);
+			relationships.put(t.getOwnerId(), t);
 			return true;
 		} catch (NullPointerException e) {
 			logger.error(e.getMessage());
@@ -40,7 +40,7 @@ public class InMemoryRelationship implements BasicAccess<Relationship> {
 
 	@Override
 	public int update(Relationship t) {
-		return (relationships.replace(t.getContactId(), t) != null) ? 1 : 0;
+		return (relationships.replace(t.getOwnerId(), t) != null) ? 1 : 0;
 	}
 
 	@Override

@@ -100,33 +100,38 @@
 				<!-- Add Relationship -->
 				<h:panelGroup id="relationshipPanel">
 					<ui:repeat id="relationships" var="rel"
-						value="${contactService.currentContact.relationships}" 
+						value="${contactService.currentContact.relationships}"
 						varStatus="loop">
-	
+
 						<h:panelGroup id="newRelationshipBlock"
 							styleClass="newRelationshipBlock">
-							<h:outputLabel for="relationshipType" value="Relationship Type"/>
-							<h:inputText id="relationshipType" value="#{rel.type}"/>
+							<h:outputLabel for="relationshipType" value="Relationship Type" />
+							<h:inputText id="relationshipType" value="#{rel.type}" />
 							<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
-								<f:selectItems value="${contactService.availableContacts}" 
-								var="dataContacts" 
-								itemValue="${dataContacts.contactId}" itemLabel="${dataContacts.personName}">
+								<f:selectItems value="${contactService.availableContacts}"
+									var="dataContacts" itemValue="${dataContacts.contactId}"
+									itemLabel="${dataContacts.personName}">
 								</f:selectItems>
 							</h:selectOneMenu>
-								
 
-	<f:ajax execute="@form" render="@form">
-							<h:commandLink id="editRelationshipLink" value="Edit" action="#{contactService.setCurrentRelationship(rel)}"/>
-							<h:outputText value=" "/>
-							<h:commandLink id="removeRelationshipLink" value="Remove"
-							action="#{contactService.currentContact.removeRelationship(rel)}"/>
-							
+
+							<f:ajax execute="@form" render="@form">
+								<h:commandLink id="editRelationshipLink" value="Edit"
+									action="#{contactService.setCurrentRelationship(rel)}" />
+								<h:outputText value=" " />
+								<h:commandLink id="removeRelationshipLink" value="Remove"
+									action="#{contactService.currentContact.removeRelationship(rel)}" />
+
 							</f:ajax>
-							
-						</h:panelGroup>
-						<br/>				
-					</ui:repeat>
 
+						</h:panelGroup>
+						<br />
+					</ui:repeat>
+<!-- 						<ace:dataTable id="relationshipTable" var="rel" value="${contactService.currentContact.relationships}"> -->
+<!-- 							<ace:column> -->
+<!-- 								<h:inputText value="#{rel.type}"></h:inputText> -->
+<!-- 							</ace:column> -->
+<!-- 						</ace:dataTable> -->
 				</h:panelGroup>
 
 				<f:ajax execute="@form" render="@form">
@@ -134,14 +139,14 @@
 						<h:commandLink id="addNewRelationshipLink"
 							value="${(contactService.currentContact.relationships.size()>0)?'Add more relationships':'Add a relationship'}"
 							action="#{contactService.currentContact.addRelationship}" />
-						
+
 					</h:panelGrid>
 
 				</f:ajax>
 
 
 				<!-- form submit -->
-				<f:ajax render="editContact content editErrorMessage debugInfo"
+				<f:ajax render="@form"
 					execute="@form">
 					<h:commandButton id="submit"
 						value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
@@ -185,17 +190,17 @@
 							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
 						<h:column>
 							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
-							<h:column>
-								<f:facet name="header">Related Contacts</f:facet>
-								<ul>
-									<ui:repeat value="${dataContact.relationships}" var="dataRel">
-										<li><h:outputText value="${dataRel}"/></li>
-									</ui:repeat>
-								
-								</ul>
-							</h:column>
 						<h:column>
-						<f:facet name="header">Addresses</f:facet>
+							<f:facet name="header">Related Contacts</f:facet>
+							<ul>
+								<ui:repeat value="${dataContact.relationships}" var="dataRel">
+									<li><h:outputText value="${dataRel}" /></li>
+								</ui:repeat>
+
+							</ul>
+						</h:column>
+						<h:column>
+							<f:facet name="header">Addresses</f:facet>
 							<ul>
 								<ui:repeat value="${dataContact.addresses}" var="dataAddr">
 									<li><h:outputText value="${dataAddr.getDefaultFormat()}" /></li>
