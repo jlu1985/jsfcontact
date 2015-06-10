@@ -92,4 +92,7 @@ public class Relationship implements Serializable {
 				+ toContactId + ", ownerId=" + ownerId + "]";
 	}
 
+	public boolean isNew(){
+		return (relationshipId <= 0)? true:false;
+	}
 }

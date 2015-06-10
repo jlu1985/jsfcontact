@@ -22,7 +22,9 @@ public class InMemoryRelationship implements BasicAccess<Relationship> {
 			.getLogger(InMemoryRelationship.class);
 
 	private Map<Long, Relationship> relationships;
-
+	
+	private long id = 0L;
+	
 	public InMemoryRelationship() {
 		relationships = new HashMap<>();
 	}
@@ -30,6 +32,7 @@ public class InMemoryRelationship implements BasicAccess<Relationship> {
 	@Override
 	public boolean create(Relationship t) {
 		try {
+			t.setRelationshipId(++id);
 			relationships.put(t.getOwnerId(), t);
 			return true;
 		} catch (NullPointerException e) {

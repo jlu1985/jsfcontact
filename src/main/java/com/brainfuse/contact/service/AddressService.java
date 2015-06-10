@@ -1,5 +1,6 @@
 package com.brainfuse.contact.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +15,7 @@ import com.brainfuse.contact.models.locations.State;
 
 @ManagedBean(name = "addressService")
 @ViewScoped
-public class AddressService {
+public class AddressService implements Serializable {
 
 	@ManagedProperty(value="#{stateDao}")
 	private BasicAccess<State> stateDao;
