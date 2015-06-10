@@ -108,10 +108,15 @@
 							<h:outputLabel for="relationshipType" value="Relationship Type" />
 							<h:inputText id="relationshipType" value="#{rel.type}" />
 							<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
-								<f:selectItems value="${contactService.availableContacts}"
-									var="dataContacts" itemValue="${dataContacts.contactId}"
-									itemLabel="${dataContacts.personName}">
-								</f:selectItems>
+<!-- 								<f:selectItems value="${contactService.availableContacts}" -->
+<!-- 									var="dataContacts" itemValue="${dataContacts.contactId}" -->
+<!-- 									itemLabel="${dataContacts.personName}"> -->
+<!-- 								</f:selectItems> -->
+								
+								<ace:autoCompleteEntry id="autoComplete" filterMatchMode="contains" clientSide="true"
+										value="#{rel.toContactId}" rows="20" converter="javax.faces.Long">
+										<f:selectItems value="${contactService.availableContactsSelectItems}" />
+									</ace:autoCompleteEntry>
 							</h:selectOneMenu>
 
 
@@ -127,11 +132,46 @@
 						</h:panelGroup>
 						<br />
 					</ui:repeat>
-<!-- 						<ace:dataTable id="relationshipTable" var="rel" value="${contactService.currentContact.relationships}"> -->
-<!-- 							<ace:column> -->
-<!-- 								<h:inputText value="#{rel.type}"></h:inputText> -->
-<!-- 							</ace:column> -->
-<!-- 						</ace:dataTable> -->
+
+					<!--Iceface Contact Relationship -->
+					<ace:dataTable id="relationshipTable" var="rel"
+						value="${contactService.currentContact.relationships}">
+						<ace:column headerText="Type">
+							<ace:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{rel.type}"></h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{rel.type}"></h:inputText>
+								</f:facet>
+							</ace:cellEditor>
+						</ace:column>
+						<ace:column headerText="Contact">
+
+							<ace:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{rel.toContactId}"></h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<!-- 									<h:selectOneMenu id="toContactId" value="#{rel.toContactId}"> -->
+									<!-- 										<f:selectItems value="${contactService.availableContacts}" -->
+									<!-- 											var="dataContacts" itemValue="${dataContacts.contactId}" -->
+									<!-- 											itemLabel="${dataContacts.personName}"> -->
+									<!-- 										</f:selectItems> -->
+									<!-- 									</h:selectOneMenu> -->
+
+									<ace:autoCompleteEntry id="autoComplete" 
+										value="#{rel.toContactId}" rows="20">
+										<f:selectItems value="${contactService.availableContacts}" />
+									</ace:autoCompleteEntry>
+								</f:facet>
+							</ace:cellEditor>
+						</ace:column>
+						<ace:column>
+							<ace:rowEditor />
+						</ace:column>
+
+					</ace:dataTable>
 				</h:panelGroup>
 
 				<f:ajax execute="@form" render="@form">
@@ -146,8 +186,7 @@
 
 
 				<!-- form submit -->
-				<f:ajax render="@form"
-					execute="@form">
+				<f:ajax render="@form" execute="@form">
 					<h:commandButton id="submit"
 						value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
 						action="#{contactService.updateCurrentContact}" />
@@ -212,14 +251,14 @@
 							<h:commandLink id="editLink"
 								action="#{contactService.setCurrentContact(dataContact)}"
 								value="Edit">
-								<f:ajax render="@form :editContact :debugInfo" execute="@form" />
+								<f:ajax render="@form" execute="@form" />
 							</h:commandLink>
 							<h:outputText value=" " />
 							<h:commandLink id="deleteLink"
 								onclick="confirm('Deleting id: ${dataContact.contactId}')"
 								action="#{contactService.deleteContact(dataContact.contactId)}"
 								value="delete">
-								<f:ajax execute="@form" render="@form :editContact" />
+								<f:ajax execute="@form" render="@form" />
 							</h:commandLink>
 						</h:column>
 					</h:dataTable>

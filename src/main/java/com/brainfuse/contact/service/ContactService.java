@@ -1,6 +1,7 @@
 package com.brainfuse.contact.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +72,14 @@ public class ContactService implements Serializable {
 		else
 			return allContacts;
 
+	}
+	
+	public List<SelectItem> getAvailableContactsSelectItems(){
+		List<SelectItem> result =
+		
+		getAvailableContacts().stream().map(contact-> new SelectItem(contact.getContactId())).collect(Collectors.toList());
+		return result;
+		
 	}
 
 	public void createNewContact(Contact c) {
