@@ -2,6 +2,8 @@ package com.brainfuse.contact.models;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.brainfuse.contact.service.ModelContants;
 
 public class Relationship implements Serializable {
@@ -10,7 +12,13 @@ public class Relationship implements Serializable {
 	private String type;
 	private long toContactId;
 	private long ownerId;
-
+	
+	public Relationship() {
+		type=StringUtils.EMPTY;
+		toContactId=ModelContants.DEFAULT_ID;
+		ownerId = ModelContants.DEFAULT_ID;
+	}
+	
 	public String getType() {
 		return type;
 	}

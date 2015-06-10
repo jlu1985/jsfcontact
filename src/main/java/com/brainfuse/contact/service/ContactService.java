@@ -51,7 +51,7 @@ public class ContactService implements Serializable {
 		return dao.find();
 	}
 	
-	public List<Contact> getAvailableContacts() {
+	public List<Contact> getAvailableContacts(Relationship selectedRel) {
 		List<Relationship> relationships = getCurrentContact().getRelationships();
 		logger.debug("filtering all contacts from {}", relationships);
 		List<Contact> allContacts = getContacts();
@@ -61,10 +61,10 @@ public class ContactService implements Serializable {
 		if (relationships != null && relationships.size() > 0) {
 			List<Contact> contacts = allContacts
 					.stream()
-					.filter(contact -> !relatedIds.contains(contact
+					.filter(contact -> (!relatedIds.contains(contact
 							.getContactId())
 							&& contact.getContactId() != getCurrentContact()
-									.getContactId())
+									.getContactId()) || contact.getContactId()==selectedRel.getToContactId())
 					.collect(Collectors.toList());
 			return contacts;
 		}
@@ -74,14 +74,6 @@ public class ContactService implements Serializable {
 
 	}
 	
-	public List<SelectItem> getAvailableContactsSelectItems(){
-		List<SelectItem> result =
-		
-		getAvailableContacts().stream().map(contact-> new SelectItem(contact.getContactId())).collect(Collectors.toList());
-		return result;
-		
-	}
-
 	public void createNewContact(Contact c) {
 		logger.debug("add contact using dao");
 		dao.create(c);

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.brainfuse.contact.models.locations.Address;
+import com.brainfuse.contact.service.ModelContants;
 
 public class Contact implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger(Contact.class);
@@ -22,6 +24,7 @@ public class Contact implements Serializable {
 	private List<Relationship> relationships;
 	
 	public Contact() {
+		contactId = ModelContants.DEFAULT_ID;
 		addresses = new ArrayList<Address>();
 		relationships = new ArrayList<Relationship>();
 	}
