@@ -1,22 +1,18 @@
 package com.brainfuse.contact.models.locations;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.brainfuse.contact.service.AddressService;
 
-//@FacesConverter(forClass=State.class)
 @ManagedBean
 @RequestScoped
 public class StateConverter implements Converter {
@@ -40,7 +36,7 @@ public class StateConverter implements Converter {
 		if (value == null){ return null;}
 		for (State state : addressService.getStates()) {
 
-			if (state.toString().equals(value)) {
+			if (state.getName().equals(value)) {
 				logger.debug("Found object {} that matches {}",state,value);
 				logger.debug("Returning {}",state);
 				return state;
@@ -54,6 +50,7 @@ public class StateConverter implements Converter {
 	public String getAsString(FacesContext context, UIComponent ui, Object obj) {
 		logger.debug("Converting {} to String",obj);
 		if (obj==null) return null;
+		
 		return obj.toString();
 	}
 	

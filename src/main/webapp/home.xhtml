@@ -16,7 +16,7 @@
 </style>
 </h:head>
 <h:body>
-	<ui:debug hotkey="x"/>
+	<ui:debug hotkey="x" />
 	<h:form id="editContactForm">
 		<h:messages />
 		<h:panelGroup id="editContact">
@@ -49,129 +49,159 @@
 					<ui:repeat id="addresses" var="addr"
 						value="#{contactService.currentContact.addresses}"
 						varStatus="loop">
-						<h:panelGrid columns="2" id="newAddressBlock"
-							styleClass="newAddressBlock">
-							<f:facet name="header">
-								<h:outputText value="Address ${loop.index}" />
-							</f:facet>
-							<h:outputLabel for="line1" value="Address Line1: " />
-							<h:inputText id="line1" value="#{addr.addressLine1}"></h:inputText>
-							<h:outputLabel for="line2" value="Address Line2: " />
-							<h:inputText id="line2" value="#{addr.addressList2}"></h:inputText>
-							<h:outputLabel for="state" value="State" />
-							<h:selectOneMenu id="state" value="#{addr.state}"
-								converter="#{stateConverter}">
-								<f:selectItem itemValue="#{null}" itemLabel="--select--"
-									noSelectionOption="true" />
-								<f:selectItems value="${addressService.states}" var="states"
-									itemLabel="#{states.name}" itemValue="#{states}"></f:selectItems>
-								<f:ajax event="valueChange" render="city"></f:ajax>
-							</h:selectOneMenu>
-							<h:outputLabel for="city" value="City" />
-							<h:selectOneMenu id="city" value="#{addr.city}"
-								converter="#{cityConverter}">
-								<f:selectItem itemValue="#{null}" itemLabel="--select--"
-									noSelectionOption="true" />
-								<f:selectItems value="${addr.state.cities}" var="cities"
-									itemLabel="#{cities.name}" itemValue="#{cities}"></f:selectItems>
-								<f:attribute name="state" value="${addr.state}"></f:attribute>
-							</h:selectOneMenu>
-							<h:outputLabel for="postcode" value="Postal Code" />
-							<h:inputText id="postcode" value="#{addr.postcode}" />
 
-						</h:panelGrid>
-					</ui:repeat>
+						<!-- 						<h:panelGrid columns="2" id="newAddressBlock" -->
+						<!-- 							styleClass="newAddressBlock"> -->
+						<!-- 							<f:facet name="header"> -->
+						<!-- 								<h:outputText value="Address ${loop.index}" /> -->
+						<!-- 							</f:facet> -->
 
-				</h:panelGroup>
+						<ace:textEntry id="line1" value="#{addr.addressLine1}"
+							label="Address Line 1" labelPosition="left">
 
-				<f:ajax execute="@form" render="@form">
-					<h:panelGrid columns="2" id="addressControls">
-						<h:commandLink id="addNewAddressLink"
-							value="${(contactService.currentContact.addresses.size() >0)?'Add more addresses':'Add an address'}"
-							action="#{contactService.addAddress(contactService.currentContact)}" />
-						<h:commandLink id="removeLastAddressLink"
-							action="#{contactService.removeLastAddress(contactService.currentContact)}"
-							value="Remove"
-							rendered="${contactService.currentContact.addresses.size() >0}" />
-					</h:panelGrid>
-				</f:ajax>
-
-
-				<!-- Add Relationship -->
-				<h:panelGroup id="relationshipPanel">
-					<ui:repeat id="relationships" var="rel"
-						value="${contactService.currentContact.relationships}"
-						varStatus="loop">
-
-						<br />
-					</ui:repeat>
-
-					<!--Iceface Contact Relationship -->
-
-
-					<h:commandLink id="addNewRelationshipLink"
-						value="Add a relationship"
-						action="#{contactService.currentContact.addRelationship}">
-						<ace:ajax render="editRelBlock" />
-					</h:commandLink>
-					<br />
-					<h:panelGroup id="editRelBlock">
-						<ace:dataTable id="relationshipTable" var="rel"
-							value="${contactService.currentContact.relationships}"
-							rendered="${contactService.currentContact.relationships.size()>0}">
 							<ace:ajax />
-							<ace:column headerText="Type">
-								<ace:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{rel.type}"></h:outputText>
-									</f:facet>
-									<f:facet name="input">
-										<h:inputText value="#{rel.type}"></h:inputText>
-									</f:facet>
-								</ace:cellEditor>
-							</ace:column>
-							<ace:column headerText="Contact">
-
-								<ace:cellEditor>
-									<f:facet name="output">
-										<h:outputText value="#{rel.toContactId}"></h:outputText>
-									</f:facet>
-									<f:facet name="input">
-										<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
-											<f:selectItems
-												value="${contactService.getAvailableContacts(rel)}"
-												var="dataContacts" itemValue="${dataContacts.contactId}"
-												itemLabel="${dataContacts.personName}">
-											</f:selectItems>
-										</h:selectOneMenu>
-									</f:facet>
-								</ace:cellEditor>
-							</ace:column>
-							<ace:column headerText="Edit">
-								<ace:rowEditor />
-							</ace:column>
-							<ace:column headerText="Remove">
-								<h:commandLink id="removeRelationshipLink" value="Remove"
-									action="#{contactService.currentContact.removeRelationship(rel)}">
-
-								</h:commandLink>
-
-							</ace:column>
-						</ace:dataTable>
-					</h:panelGroup>
-				</h:panelGroup>
+						</ace:textEntry>
+						<ace:textEntry id="line2" value="#{addr.addressLine2}"
+							label="Address Line 2" labelPosition="left">
+							<ace:ajax />
+						</ace:textEntry>
+						<ace:comboBox id="state" label="State" labelPosition="left"
+							itemValue="#{states}"
+							listValue="#{addressService.getStatesAsString()}" listVar="states"
+							value="#{addr.state}">
+							<f:facet name="row">
+								<h:outputText value="${states}"></h:outputText>
+							</f:facet>
+							<ace:ajax execute="@this" render="@all"/>
+							<ace:ajax event="blur" execute="@this" render="@all"/>
+						</ace:comboBox>
+						<ace:comboBox id="city" label="City" labelPosition="left"
+							itemValue="${cities}"
+							listValue="#{addressService.getCities(addr.state)}" listVar="cities"
+							value="#{addr.city}">
+							<ace:ajax />
+							<f:facet name="row">
+								<h:outputText value="${cities}" />
+							</f:facet>
+						</ace:comboBox>
 
 
-				<!-- form submit -->
-				<ace:ajax>
-					<h:commandButton id="submit"
-						value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
-						action="#{contactService.updateCurrentContact}" />
 
-					<h:commandButton id="cancel" value="cancel"
-						action="#{contactService.cancel}" />
-				</ace:ajax>
+				<!-- 							<h:outputLabel for="state" value="State" /> -->
+				<!-- 							<h:selectOneMenu id="state" value="#{addr.state}" -->
+				<!-- 								converter="#{stateConverter}"> -->
+				<!-- 								<f:selectItem itemValue="#{null}" itemLabel="select" -->
+				<!-- 									noSelectionOption="true" /> -->
+
+				<!-- 								<f:ajax event="valueChange" render="city"></f:ajax> -->
+				<!-- 							</h:selectOneMenu> -->
+
+
+				<!-- 							<h:outputLabel for="city" value="City" /> -->
+				<!-- 							<h:selectOneMenu id="city" value="#{addr.city}" -->
+				<!-- 								converter="#{cityConverter}"> -->
+				<!-- 								<f:selectItem itemValue="#{null}" itemLabel="select" -->
+				<!-- 									noSelectionOption="true" /> -->
+				<!-- 								<f:selectItems value="${addr.state.cities}" var="cities" -->
+				<!-- 									itemLabel="#{cities.name}" itemValue="#{cities}"></f:selectItems> -->
+				<!-- 								<f:attribute name="state" value="${addr.state}"></f:attribute> -->
+				<!-- 							</h:selectOneMenu> -->
+				<!-- 							<h:outputLabel for="postcode" value="Postal Code" /> -->
+				<!-- 							<h:inputText id="postcode" value="#{addr.postcode}" /> -->
+
+				<!-- 						</h:panelGrid> -->
+				</ui:repeat>
+
 			</h:panelGroup>
+
+			<f:ajax execute="@form" render="@form">
+				<h:panelGrid columns="2" id="addressControls">
+					<h:commandLink id="addNewAddressLink"
+						value="${(contactService.currentContact.addresses.size() >0)?'Add more addresses':'Add an address'}"
+						action="#{contactService.addAddress(contactService.currentContact)}" />
+					<h:commandLink id="removeLastAddressLink"
+						action="#{contactService.removeLastAddress(contactService.currentContact)}"
+						value="Remove"
+						rendered="${contactService.currentContact.addresses.size() >0}" />
+				</h:panelGrid>
+			</f:ajax>
+
+
+			<!-- Add Relationship -->
+			<h:panelGroup id="relationshipPanel">
+				<ui:repeat id="relationships" var="rel"
+					value="${contactService.currentContact.relationships}"
+					varStatus="loop">
+
+					<br />
+				</ui:repeat>
+
+				<!--Iceface Contact Relationship -->
+
+
+				<h:commandLink id="addNewRelationshipLink"
+					value="Add a relationship"
+					action="#{contactService.currentContact.addRelationship}">
+					<ace:ajax render="editRelBlock" />
+				</h:commandLink>
+				<br />
+				<h:panelGroup id="editRelBlock">
+					<ace:dataTable id="relationshipTable" var="rel"
+						value="${contactService.currentContact.relationships}"
+						rendered="${contactService.currentContact.relationships.size()>0}">
+						<ace:ajax />
+						<ace:column headerText="Type">
+							<ace:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{rel.type}"></h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<h:inputText value="#{rel.type}"></h:inputText>
+								</f:facet>
+							</ace:cellEditor>
+						</ace:column>
+						<ace:column headerText="Contact">
+
+							<ace:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{rel.toContactId}"></h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<h:selectOneMenu id="toContactId" value="#{rel.toContactId}">
+										<f:selectItems
+											value="${contactService.getAvailableContacts(rel)}"
+											var="dataContacts" itemValue="${dataContacts.contactId}"
+											itemLabel="${dataContacts.personName}">
+										</f:selectItems>
+									</h:selectOneMenu>
+								</f:facet>
+							</ace:cellEditor>
+						</ace:column>
+						<ace:column headerText="Edit">
+							<ace:rowEditor />
+						</ace:column>
+						<ace:column headerText="Remove">
+							<h:commandLink id="removeRelationshipLink" value="Remove"
+								action="#{contactService.currentContact.removeRelationship(rel)}">
+
+							</h:commandLink>
+
+						</ace:column>
+					</ace:dataTable>
+				</h:panelGroup>
+			</h:panelGroup>
+
+
+			<!-- form submit -->
+			<ace:ajax>
+				<h:commandButton id="submit"
+					value="${contactService.currentContact.isNewContact()?'New':'Edit'}"
+					action="#{contactService.updateCurrentContact}" />
+
+				<h:commandButton id="cancel" value="cancel"
+					action="#{contactService.cancel}" />
+			</ace:ajax>
+		</h:panelGroup>
 
 
 
