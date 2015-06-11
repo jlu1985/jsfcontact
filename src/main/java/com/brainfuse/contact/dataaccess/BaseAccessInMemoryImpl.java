@@ -65,7 +65,9 @@ public class BaseAccessInMemoryImpl implements
 	public int delete(long... ids) {
 		logger.debug("dao calls: delete all {}",ids);
 		int beforeSize = contacts.size();
-		Arrays.stream(ids).forEach(id -> contacts.remove(id));
+		for (long id:ids){
+			contacts.remove(id);
+		}
 		int afterSize = contacts.size();
 		return beforeSize-afterSize;
 	}

@@ -35,7 +35,11 @@ public class IcePlayground {
 	
 	public IcePlayground() {
 		icecubes = new HashMap<>();
-		LongStream.rangeClosed(1, 20).forEach(index -> icecubes.put(index,new Icecube(index,3.14*index,"Text " +index)));
+		
+		for (int i = 0; i<21;i++){
+			icecubes.put(new Long(i), new Icecube(i,3.14*i,"Text "+i));
+		}
+		
 	}
 	
 	

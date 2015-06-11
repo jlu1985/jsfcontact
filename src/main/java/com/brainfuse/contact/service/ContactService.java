@@ -1,6 +1,7 @@
 package com.brainfuse.contact.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.brainfuse.contact.dataaccess.BasicAccess;
-import com.brainfuse.contact.dataaccess.InMemoryRelationship;
 import com.brainfuse.contact.models.Contact;
 import com.brainfuse.contact.models.Relationship;
 import com.brainfuse.contact.models.locations.Address;
@@ -66,19 +66,24 @@ public class ContactService implements Serializable {
 		logger.debug("filtering all contacts from {}", relationships);
 		List<Contact> allContacts = getContacts();
 
-		List<Long> relatedIds = relationships.stream()
-				.map(rel -> rel.getToContactId()).collect(Collectors.toList());
+		List<Long> relatedIds = new ArrayList<>();
+
+		for (Relationship rel : relationships) {
+			relatedIds.add(rel.getToContactId());
+		}
 
 		if (relationships != null && relationships.size() > 0) {
-			List<Contact> contacts = allContacts
-					.stream()
-					.filter(contact -> (!relatedIds.contains(contact
-							.getContactId()) && contact.getContactId() != getCurrentContact()
-							.getContactId())
-							|| contact.getContactId() == selectedRel
-									.getToContactId())
-					.collect(Collectors.toList());
-			return contacts;
+			List<Contact> results = new ArrayList<Contact>();
+			for (Contact contact : allContacts) {
+				if ((!relatedIds.contains(contact.getContactId()) && contact
+						.getContactId() != getCurrentContact().getContactId())
+						|| contact.getContactId() == selectedRel
+								.getToContactId())
+
+					results.add(contact);
+			}
+			return results;
+
 		}
 
 		else
@@ -106,25 +111,24 @@ public class ContactService implements Serializable {
 			if (c.isNewContact()) {
 				logger.debug("Contact is a new Contact");
 				createNewContact(c);
-				rels.forEach(rel -> {
+				for (Relationship rel : rels) {
 					rel.setOwnerId(c.getContactId());
 					if (rel.isNew()) {
 						relDao.create(rel);
 					} else {
 						relDao.update(rel);
 					}
-				});
-
+				}
 			}
 
 			else {
-				rels.forEach(rel -> {
+				for (Relationship rel : rels) {
 					if (rel.isNew()) {
 						relDao.create(rel);
 					} else {
 						relDao.update(rel);
 					}
-				});
+				}
 				c.setRelationships(rels);
 				dao.update(c);
 			}
