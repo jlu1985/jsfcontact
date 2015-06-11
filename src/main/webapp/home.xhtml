@@ -46,46 +46,86 @@
 
 
 				<h:panelGroup id="addressPanel">
-					<ui:repeat id="addresses" var="addr"
-						value="#{contactService.currentContact.addresses}"
-						varStatus="loop">
-
-						<ace:textEntry id="line1" value="#{addr.addressLine1}"
-							label="Address Line 1" labelPosition="left">
-
-							<ace:ajax />
-						</ace:textEntry>
-						<ace:textEntry id="line2" value="#{addr.addressLine2}"
-							label="Address Line 2" labelPosition="left">
-							<ace:ajax />
-						</ace:textEntry>
-
-						<ace:comboBox id="state" label="State" labelPosition="left"
-							value="#{addr.state}">
-							<f:selectItems value="#{addressService.statesAsSelectItems}"></f:selectItems>
-							<ace:ajax render="@all" execute="@this"/>
-						</ace:comboBox>
-						<ace:comboBox id="city" label="City" labelPosition="left"
-							value="#{addr.city}">
-							<ace:ajax />
-							<f:selectItems
-								value="#{addressService.getCitiesAsSelectItem(addr.state)}"></f:selectItems>
-						</ace:comboBox>
-					</ui:repeat>
 
 					<h:panelGrid columns="2" id="addressControls">
-						<h:commandLink id="addNewAddressLink"
-							value="${(contactService.currentContact.addresses.size() >0)?'Add more addresses':'Add an address'}"
+						<h:commandLink id="addNewAddressLink" value="Add an address"
 							action="#{contactService.addAddress(contactService.currentContact)}">
 							<ace:ajax execute="@this" render="addressPanel" />
 						</h:commandLink>
-						<h:commandLink id="removeLastAddressLink"
-							action="#{contactService.removeLastAddress(contactService.currentContact)}"
-							value="Remove"
-							rendered="${contactService.currentContact.addresses.size() >0}">
-							<ace:ajax execute="@this" render="addresses" />
-						</h:commandLink>
+
 					</h:panelGrid>
+						<ace:dataTable id="addressTable" var="addr"
+							value="#{contactService.currentContact.addresses}"
+							varStatus="loop"
+							rendered="#{contactService.currentContact.addresses.size()>0}">
+							<ace:column id="line1" headerText="Address Line 1">
+								<ace:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{addr.addressLine1}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:inputText value="#{addr.addressLine1}" />
+									</f:facet>
+								</ace:cellEditor>
+							</ace:column>
+							<ace:column id="line2" headerText="Address Line 2">
+								<ace:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{addr.addressLine2}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:inputText value="#{addr.addressLine2}" />
+									</f:facet>
+								</ace:cellEditor>
+							</ace:column>
+
+							<ace:column headerText="State">
+								<ace:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{addr.state}" />
+									</f:facet>
+									<f:facet name="input">
+										<ace:comboBox id="state" value="#{addr.state}">
+											<f:selectItems value="#{addressService.statesAsSelectItems}"></f:selectItems>
+											<ace:ajax render="@form" execute="@form " />
+										</ace:comboBox>
+									</f:facet>
+								</ace:cellEditor>
+							</ace:column>
+							<ace:column headerText="City">
+								<ace:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{addr.city}" />
+									</f:facet>
+									<f:facet name="input">
+										<ace:comboBox id="city" value="#{addr.city}">
+											<f:selectItems
+												value="#{addressService.getCitiesAsSelectItem(addr.state)}"></f:selectItems>
+										</ace:comboBox>
+									</f:facet>
+								</ace:cellEditor>
+							</ace:column>
+							<ace:column headerText="Post Code">
+								<ace:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{addr.postcode}" />
+									</f:facet>
+									<f:facet name="input">
+										<h:inputText value="#{addr.postcode}" />
+									</f:facet>
+								</ace:cellEditor>
+							</ace:column>
+							<ace:column headerText="Edit">
+								<ace:rowEditor />
+							</ace:column>
+							<ace:column headerText="Remove">
+								<h:commandLink id="removeAddress"
+									action="#{contactService.currentContact.removeAddress(addr)}"
+									value="Remove">
+									<ace:ajax execute="@this" render="@form" />
+								</h:commandLink>
+							</ace:column>
+						</ace:dataTable>
 				</h:panelGroup>
 
 

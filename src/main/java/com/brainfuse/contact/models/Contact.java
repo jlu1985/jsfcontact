@@ -108,6 +108,13 @@ public class Contact implements Serializable {
 	public void removeRelationship(Relationship rel){
 			relationships.remove(rel);
 	}
+	
+	public void removeAddress(Address addr){
+		logger.debug("removing address {}", addr);
+		logger.debug("addresses before removal {}", addresses);
+		addresses.remove(addr);
+		logger.debug("addresses after removal {}", addresses);
+	}
 	@Override
 	public String toString() {
 		return "Contact [contactId="
