@@ -1,5 +1,6 @@
 package com.brainfuse.contact.models.locations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,7 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.brainfuse.contact.service.ModelContants;
 
-public class State {
+public class State implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4940796393128467866L;
 
 	@Override
 	public String toString() {

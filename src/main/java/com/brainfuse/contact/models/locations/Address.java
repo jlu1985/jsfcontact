@@ -1,7 +1,15 @@
 package com.brainfuse.contact.models.locations;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable{
 	
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -729031563940347156L;
 	private long addressId;
 	private String addressLine1;
 	private String addressLine2;

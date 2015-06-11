@@ -1,5 +1,6 @@
 package com.brainfuse.contact.dataaccess.locations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import com.brainfuse.contact.models.locations.State.StateBuilder;
 
 @ManagedBean(name="stateDao",eager=true)
 @ApplicationScoped
-public class InMemoryState implements BasicAccess<State> {
+public class InMemoryState implements BasicAccess<State>,Serializable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(InMemoryState.class);
 	private Map<Long,State> states;

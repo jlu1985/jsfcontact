@@ -22,8 +22,13 @@ import com.brainfuse.contact.models.locations.State;
 @ViewScoped
 public class AddressService implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2845903386206287771L;
 	private final static Logger logger = LoggerFactory
 			.getLogger(AddressService.class);
+	
 	@ManagedProperty(value = "#{stateDao}")
 	private BasicAccess<State> stateDao;
 
@@ -56,7 +61,7 @@ public class AddressService implements Serializable {
 		
 		for (State state:getStates()){
 			
-			result.add(new SelectItem(state,state.getName()));
+			result.add(new SelectItem(state.getName()));
 		}
 		return result;
 	}
@@ -81,12 +86,29 @@ public class AddressService implements Serializable {
 		}
 		return null;
 	}
+	
+	public List<SelectItem> getCitiesAsSelectItem(String state){
+		logger.debug("get cities to dispaly for {}",state);
+		for (State el : getStates()) {
+			if (el.getName().equals(state)) {
+
+				List<SelectItem> result = new ArrayList<>();
+				for (City city : el.getCities()) {
+					result.add(new SelectItem(city.getName()));
+				}
+				logger.debug("returning display items {}",result);
+				return result;
+
+			}
+		}
+		logger.debug("no match, return null");
+		return null;
+	}
 
 	@PostConstruct
 	public void init() {
 		logger.debug("{} is created by the container", this);
 		logger.debug("stateDao is loaded with {}", stateDao);
 		states = stateDao.find();
-		logger.debug("states is loaded with {} ", states);
 	}
 }
