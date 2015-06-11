@@ -4,9 +4,17 @@ public class Address {
 	
 	private long addressId;
 	private String addressLine1;
-	private String addressList2;
-	private City city;
-	private State state;
+	private String addressLine2;
+	public String getAddressLine2() {
+		return addressLine2;
+	}
+	public void setAddressLine2(String addressLine2) {
+		this.addressLine2 = addressLine2;
+	}
+	
+	private String city;
+	private String state;
+	
 	private int postcode;
 	
 	public long getAddressId() {
@@ -21,22 +29,16 @@ public class Address {
 	public void setAddressLine1(String addressLine1) {
 		this.addressLine1 = addressLine1;
 	}
-	public String getAddressList2() {
-		return addressList2;
-	}
-	public void setAddressList2(String addressList2) {
-		this.addressList2 = addressList2;
-	}
-	public City getCity() {
+	public String getCity() {
 		return city;
 	}
-	public void setCity(City city) {
+	public void setCity(String city) {
 		this.city = city;
 	}
-	public State getState() {
+	public String getState() {
 		return state;
 	}
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 	public int getPostcode() {
@@ -47,14 +49,14 @@ public class Address {
 	}
 	
 	public String getDefaultFormat(){
-		return String.format("%s %s,%s, %s %d",addressLine1, addressList2,city.getName(),state.getShortName(),postcode);
+		return String.format("%s %s,%s, %s %d",addressLine1, addressLine2,city,state,postcode);
 	}
 	
 	@Override
 	public String toString() {
 		return String
-				.format("Address [addressId=%s, addressLine1=%s, addressList2=%s, city=%s, state=%s, postcode=%s]",
-						addressId, addressLine1, addressList2, city, state,
+				.format("Address [addressId=%s, addressLine1=%s, addressLine2=%s, city=%s, state=%s, postcode=%s]",
+						addressId, addressLine1, addressLine2, city, state,
 						postcode);
 	}
 }
