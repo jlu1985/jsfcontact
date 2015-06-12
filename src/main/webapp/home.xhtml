@@ -192,7 +192,7 @@
 
 				<h:commandButton id="cancel" value="cancel"
 					action="#{contactService.cancel}">
-					<ace:ajax execute="@form" render="@all" />
+					<ace:ajax execute="@this" render="@all" />
 				</h:commandButton>
 			</h:panelGroup>
 
@@ -210,57 +210,63 @@
 
 				<h:outputText id="newContactMessage" value="You have no contacts."
 					rendered="${not contactService.hasContacts()}" />
-				<h:commandLink value="new contact" id="newContactButton"
+				<ace:linkButton value="new contact" id="newContactButton"
 					action="#{contactService.newContact}">
-					<f:ajax render="@all" execute="@form" />
-				</h:commandLink>
+					<ace:ajax render="@all" execute="@this" />
+					</ace:linkButton>
 
 
 				<h:panelGroup id="listContacts"
 					rendered="${contactService.hasContacts()}">
-					<h:dataTable id="dataTable" value="${contactService.getContacts()}"
-						var="dataContact">
-						<h:column id="id">
-							<f:facet name="header">Id</f:facet>${dataContact.contactId}</h:column>
-						<h:column id="name">
-							<f:facet name="header">Name</f:facet>${dataContact.personName}</h:column>
-						<h:column>
-							<f:facet name="header">Phone</f:facet>${dataContact.phoneNumber}</h:column>
-						<h:column>
-							<f:facet name="header">Email</f:facet>${dataContact.email}</h:column>
-						<h:column>
-							<f:facet name="header">Related Contacts</f:facet>
+
+					<ace:dataTable id="dataTable"
+						value="${contactService.getContacts()}" var="dataContact">
+						<ace:column id="id" headerText="ID">
+							<h:outputText value="${dataContact.contactId}" />
+						</ace:column>
+
+
+
+						<ace:column id="name" headerText="Name">
+							<h:outputText value="${dataContact.personName}" />
+						</ace:column>
+
+						<ace:column id="phone" headerText="Phone">
+							<h:outputText value="${dataContact.phoneNumber}" />
+						</ace:column>
+						<ace:column id="email" headerText="Email">
+							<h:outputText value="${dataContact.email}" />
+						</ace:column>
+						<ace:column id="relatedContacts" headerText="Related Contacts">
 							<ul>
 								<ui:repeat value="${dataContact.relationships}" var="dataRel">
 									<li><h:outputText value="${dataRel}" /></li>
 								</ui:repeat>
 
 							</ul>
-						</h:column>
-						<h:column>
-							<f:facet name="header">Addresses</f:facet>
+						</ace:column>
+						<ace:column id="addresses" headerText="Addresses">
 							<ul>
 								<ui:repeat value="${dataContact.addresses}" var="dataAddr">
 									<li><h:outputText value="${dataAddr.getDefaultFormat()}" /></li>
 								</ui:repeat>
 							</ul>
-						</h:column>
-						<h:column id="actionLinks">
-							<f:facet name="header" id="whatisthis">Actions</f:facet>
-							<h:commandLink id="editLink"
-								action="#{contactService.setCurrentContact(dataContact)}"
-								value="Edit">
-								<f:ajax render="@form" execute="@form" />
-							</h:commandLink>
-							<h:outputText value=" " />
-							<h:commandLink id="deleteLink"
-								onclick="confirm('Deleting id: ${dataContact.contactId}')"
-								action="#{contactService.deleteContact(dataContact.contactId)}"
-								value="delete">
-								<f:ajax execute="@form" render="@form" />
-							</h:commandLink>
-						</h:column>
-					</h:dataTable>
+						</ace:column>
+						<ace:column id="actionLinks" headerText="Actions">
+							<ace:ajax render="@form" execute="@this">
+								<h:panelGrid columns="2">
+									<ace:linkButton id="editLink"
+										action="#{contactService.setCurrentContact(dataContact)}"
+										value="Edit">
+									</ace:linkButton>
+									<ace:linkButton id="deleteLink"
+										action="#{contactService.deleteContact(dataContact.contactId)}"
+										value="delete">
+									</ace:linkButton>
+								</h:panelGrid>
+							</ace:ajax>
+						</ace:column>
+					</ace:dataTable>
 				</h:panelGroup>
 			</h:panelGroup>
 		</h:panelGroup>
